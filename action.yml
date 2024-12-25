@@ -11,6 +11,12 @@ inputs:
   privateKey:
     description: The GitHub App private key
     required: true
+  owner:
+    description: The owner of the repository
+    default: ${{ github.repository_owner }}
+  repositories:
+    description: The repositories to grant access to
+    default: ${{ github.repository }}
   command:
     description: The command to run
     default: ".ghstack"
@@ -34,6 +40,8 @@ runs:
       with:
         app-id: ${{ inputs.appId }}
         private-key: ${{ inputs.privateKey }}
+        owner: ${{ inputs.owner }}
+        repositories: ${{ inputs.repositories }}
     - uses: github/command@v1
       id: command
       with:
