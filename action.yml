@@ -43,24 +43,10 @@ runs:
       with:
         app-id: ${{ inputs.app-id }}
         private-key: ${{ inputs.private-key }}
-    - uses: github/command@v1
-      id: command
+    - uses: actions/checkout@v4
       with:
-        command: .ghstack
-        reaction: ${{ inputs.reaction }}
-        permissions: ${{ inputs.permissions }}
-        username: ${{ inputs.username }}
-        email: ${{ inputs.email }}
-        token: ${{ steps.createGithubAppToken.outputs.token }}
-    - uses: .github/actions/rebase.yml
-      with:
-        base: ${{ inputs.base }}
-        command: .rebase
-        reaction: ${{ inputs.reaction }}
-        permissions: ${{ inputs.permissions }}
-        username: ${{ inputs.username }}
-        email: ${{ inputs.email }}
-        token: ${{ steps.createGithubAppToken.outputs.token }}
+        fetch-depth: 0
+        token: ${{ inputs.token }}
     - uses: DeterminateSystems/nix-installer-action@v13
       if: ${{ steps.command.outputs.continue == 'true' }}
     - uses: DeterminateSystems/magic-nix-cache-action@v8
