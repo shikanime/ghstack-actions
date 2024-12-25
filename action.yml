@@ -81,3 +81,9 @@ runs:
         reaction: ${{ inputs.reaction }}
         permissions: ${{ inputs.permissions }}
         token: ${{ steps.createGithubAppToken.outputs.token }}
+    - uses: .github/actions/close.yaml
+      with:
+        command: .close
+        reaction: ${{ inputs.reaction }}
+        permissions: ${{ inputs.permissions }}
+        token: ${{ steps.createGithubAppToken.outputs.token }}
