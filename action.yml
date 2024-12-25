@@ -11,21 +11,21 @@ inputs:
   privateKey:
     description: The GitHub App private key
     required: true
-  command:
-    description: The command to run
-    default: ".ghstack"
+  base:
+    description: The base branch to rebase onto
+    default: main
   reaction:
     description: The reaction to add
-    default: "rocket"
+    default: rocket
   permissions:
     description: The permissions to check
-    default: "write,maintain,admin"
+    default: write,maintain,admin
   username:
     description: The username to use
-    default: "github-actions[bot]"
+    default: github-actions[bot]
   email:
     description: The email to use
-    default: "github-actions[bot]@users.noreply.github.com"
+    default: github-actions[bot]@users.noreply.github.com
 runs:
   using: composite
   steps:
@@ -34,30 +34,20 @@ runs:
       with:
         app-id: ${{ inputs.appId }}
         private-key: ${{ inputs.privateKey }}
-    - uses: github/command@v1
-      id: command
+    - uses: .github/actions/ghstack.yml
       with:
-        command: ${{ inputs.command }}
+        command: .ghstack
         reaction: ${{ inputs.reaction }}
-        allowed_contexts: pull_request
         permissions: ${{ inputs.permissions }}
-        github_token: ${{ steps.createGithubAppToken.outputs.token }}
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
+        username: ${{ inputs.username }}
+        email: ${{ inputs.email }}
         token: ${{ steps.createGithubAppToken.outputs.token }}
-    - uses: DeterminateSystems/nix-installer-action@v13
-      if: ${{ steps.command.outputs.continue == 'true' }}
-    - uses: DeterminateSystems/magic-nix-cache-action@v8
-      if: ${{ steps.command.outputs.continue == 'true' }}
-    - name: Land Pull Request
-      shell: bash
-      run: |
-        nix run nixpkgs#sapling -- config \
-          --local ui.username "${{ inputs.username }}" \
-          --local ui.email "${{ inputs.email }}"
-        nix run nixpkgs#sapling -- ghstack land \
-          ${{ github.event.issue.pull_request.html_url }}
-      if: ${{ steps.command.outputs.continue == 'true' }}
-      env:
-        GH_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+    - uses: .github/actions/rebase.yml
+      with:
+        base: ${{ inputs.base }}
+        command: .rebase
+        reaction: ${{ inputs.reaction }}
+        permissions: ${{ inputs.permissions }}
+        username: ${{ inputs.username }}
+        email: ${{ inputs.email }}
+        token: ${{ steps.createGithubAppToken.outputs.token }}
