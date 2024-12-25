@@ -20,6 +20,12 @@ inputs:
   permissions:
     description: The permissions to check
     default: "write,maintain,admin"
+  username:
+    description: The username to use
+    default: "github-actions[bot]"
+  email:
+    description: The email to use
+    default: "github-actions[bot]@users.noreply.github.com"
 runs:
   using: composite
   steps:
@@ -48,8 +54,8 @@ runs:
       shell: bash
       run: |
         nix run nixpkgs#sapling -- config \
-          --local ui.username "github-actions[bot]" \
-          --local ui.email "github-actions[bot]@users.noreply.github.com"
+          --local ui.username "${{ inputs.username }}" \
+          --local ui.email "${{ inputs.email }}"
         nix run nixpkgs#sapling -- ghstack land \
           ${{ github.event.issue.pull_request.html_url }}
       if: ${{ steps.command.outputs.continue == 'true' }}
