@@ -46,7 +46,7 @@ runs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        token: ${{ inputs.token }}
+        token: ${{ steps.createGithubAppToken.outputs.token }}
     - uses: DeterminateSystems/nix-installer-action@v13
       if: ${{ steps.command.outputs.continue == 'true' }}
     - uses: DeterminateSystems/magic-nix-cache-action@v8
