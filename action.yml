@@ -51,3 +51,11 @@ runs:
         username: ${{ inputs.username }}
         email: ${{ inputs.email }}
         token: ${{ steps.createGithubAppToken.outputs.token }}
+    - uses: .github/actions/pr.yml
+      with:
+        command: .pr
+        reaction: ${{ inputs.reaction }}
+        permissions: ${{ inputs.permissions }}
+        username: ${{ inputs.username }}
+        email: ${{ inputs.email }}
+        token: ${{ steps.createGithubAppToken.outputs.token }}

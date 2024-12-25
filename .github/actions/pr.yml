@@ -1,0 +1,53 @@
+name: pr
+description: Re-sync the pull request chain
+inputs:
+  command:
+    description: The command to run
+    required: true
+  reaction:
+    description: The reaction to add
+    required: true
+  permissions:
+    description: The permissions to check
+    required: true
+  username:
+    description: The username to use
+    required: true
+  email:
+    description: The email to use
+    required: true
+  token:
+    description: The GitHub token to use
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: github/command@v1
+      id: command
+      with:
+        command: ${{ inputs.command }}
+        reaction: ${{ inputs.reaction }}
+        allowed_contexts: pull_request
+        permissions: ${{ inputs.permissions }}
+        github_token: ${{ inputs.token }}
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ inputs.token }}
+    - uses: DeterminateSystems/nix-installer-action@v13
+      if: ${{ steps.command.outputs.continue == 'true' }}
+    - uses: DeterminateSystems/magic-nix-cache-action@v8
+      if: ${{ steps.command.outputs.continue == 'true' }}
+    - name: Land Pull Request
+      shell: bash
+      run: |
+        nix run nixpkgs#sapling -- config \
+          --local ui.username "${{ inputs.username }}" \
+          --local ui.email "${{ inputs.email }}"
+        nix run nixpkgs#sapling -- pr pull \
+          ${{ github.event.issue.pull_request.html_url }} \
+          --goto
+        nix run nixpkgs#sapling -- pr submit
+      if: ${{ steps.command.outputs.continue == 'true' }}
+      env:
+        GH_TOKEN: ${{ inputs.token }}
