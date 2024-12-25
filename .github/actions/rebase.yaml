@@ -1,4 +1,4 @@
-name: rebase
+name: Rebase
 description: Rebase Pull Requests with ghstack
 inputs:
   base:

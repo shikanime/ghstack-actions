@@ -1,4 +1,4 @@
-name: close
+name: Close
 description: Close Pull Requests with ghstack
 inputs:
   command:
