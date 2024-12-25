@@ -5,35 +5,44 @@ branding:
   color: gray-dark
 description: Land a pull request
 inputs:
-  appId:
+  app-id:
     description: The GitHub App ID
     required: true
-  privateKey:
+  private-key:
     description: The GitHub App private key
     required: true
   command:
     description: The command to run
-    default: ".ghstack"
+    default: .ghstack
   reaction:
     description: The reaction to add
-    default: "rocket"
+    default: rocket
   permissions:
     description: The permissions to check
-    default: "write,maintain,admin"
+    default: write,maintain,admin
   username:
     description: The username to use
-    default: "github-actions[bot]"
+    default: github-actions[bot]
   email:
     description: The email to use
-    default: "github-actions[bot]@users.noreply.github.com"
+    default: github-actions[bot]@users.noreply.github.com
+  sign-commits:
+    description: Set to true if the action should sign the commit with GPG
+    default: "false"
+  gpg-private-key:
+    description: GPG Private Key with which to sign the commits in the PR to be created
+    default: ""
+  gpg-passphrase:
+    description: GPG Private Key Passphrase for the GPG Private Key with which to sign the commits in the PR to be created
+    default: ""
 runs:
   using: composite
   steps:
     - id: createGithubAppToken
       uses: actions/create-github-app-token@v1
       with:
-        app-id: ${{ inputs.appId }}
-        private-key: ${{ inputs.privateKey }}
+        app-id: ${{ inputs.app-id }}
+        private-key: ${{ inputs.private-key }}
     - uses: github/command@v1
       id: command
       with:
@@ -50,12 +59,25 @@ runs:
       if: ${{ steps.command.outputs.continue == 'true' }}
     - uses: DeterminateSystems/magic-nix-cache-action@v8
       if: ${{ steps.command.outputs.continue == 'true' }}
-    - name: Land Pull Request
-      shell: bash
+    - shell: bash
       run: |
         nix run nixpkgs#sapling -- config \
           --local ui.username "${{ inputs.username }}" \
           --local ui.email "${{ inputs.email }}"
+    - id: importGPG
+      uses: crazy-max/ghaction-import-gpg@v6
+      with:
+        gpg_private_key: ${{ inputs.gpg-private-key }}
+        passphrase: ${{ inputs.gpg-passphrase }}
+      if: ${{ inputs.sign-commits == 'true' }}
+    - shell: bash
+      run: |
+        nix run nixpkgs#sapling -- config \
+          --local gpg.key "${{ steps.importGPG.outputs.keyid }}" \
+          --local commit.gpgsign true
+      if: ${{ inputs.sign-commits == 'true' }}
+    - shell: bash
+      run: |
         nix run nixpkgs#sapling -- ghstack land \
           ${{ github.event.issue.pull_request.html_url }}
       if: ${{ steps.command.outputs.continue == 'true' }}
