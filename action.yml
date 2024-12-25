@@ -68,13 +68,11 @@ runs:
           --local gpg.key "${{ steps.importGPG.outputs.keyid }}" \
           --local commit.gpgsign true
       if: ${{ inputs.sign-commits == 'true' }}
-    - uses: .github/actions/ghstack.yml
+    - uses: .github/actions/land.yml
       with:
         command: .ghstack
         reaction: ${{ inputs.reaction }}
         permissions: ${{ inputs.permissions }}
-        username: ${{ inputs.username }}
-        email: ${{ inputs.email }}
         token: ${{ steps.createGithubAppToken.outputs.token }}
     - uses: .github/actions/rebase.yml
       with:
@@ -82,6 +80,4 @@ runs:
         command: .rebase
         reaction: ${{ inputs.reaction }}
         permissions: ${{ inputs.permissions }}
-        username: ${{ inputs.username }}
-        email: ${{ inputs.email }}
         token: ${{ steps.createGithubAppToken.outputs.token }}
