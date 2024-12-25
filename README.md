@@ -4,13 +4,15 @@ This GitHub Action is a tool that enables you to land pull requests using
 ghstack directly from GitHub Pull Requests. It adds a command that can be used
 in pull request comments to check the status and automatically land the PR using
 ghstack.
-
 ## Required Permissions
 
-For this action to work properly, it needs the following repository permissions:
+For this action to work properly, the GitHub App needs to be configured with the
+following repository permissions:
 
 - `contents: write` - To push changes when landing the PR
 - `pull-requests: write` - To update and merge pull requests
+
+These permissions must be set in the GitHub App settings interface.
 
 ## Usage
 
@@ -28,9 +30,6 @@ name: ghstack
 on:
   issue_comment:
     types: [created]
-permissions:
-  contents: write
-  pull-requests: write
 jobs:
   ghstack:
     runs-on: ubuntu-latest
