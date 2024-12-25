@@ -16,7 +16,7 @@ inputs:
     default: main
   reaction:
     description: The reaction to add
-    default: "rocket"
+    default: rocket
   permissions:
     description: The permissions to check
     default: write,maintain,admin
