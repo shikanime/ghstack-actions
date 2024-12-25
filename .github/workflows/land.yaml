@@ -10,7 +10,7 @@ jobs:
   land:
     runs-on: ubuntu-latest
     steps:
-      - uses: ..
+      - uses: shikanime/ghstack-action
         with:
           appId: ${{ vars.OPERATOR_APP_ID }}
           privateKey: ${{ secrets.OPERATOR_PRIVATE_KEY }}
