@@ -48,9 +48,7 @@ runs:
         fetch-depth: 0
         token: ${{ steps.createGithubAppToken.outputs.token }}
     - uses: DeterminateSystems/nix-installer-action@v13
-      if: ${{ steps.command.outputs.continue == 'true' }}
     - uses: DeterminateSystems/magic-nix-cache-action@v8
-      if: ${{ steps.command.outputs.continue == 'true' }}
     - shell: bash
       run: |
         nix run nixpkgs#sapling -- config \
@@ -70,7 +68,7 @@ runs:
       if: ${{ inputs.sign-commits == 'true' }}
     - uses: ./.github/actions/land.yaml
       with:
-        command: .ghstack
+        command: .land
         reaction: ${{ inputs.reaction }}
         permissions: ${{ inputs.permissions }}
         token: ${{ steps.createGithubAppToken.outputs.token }}
