@@ -8,12 +8,14 @@ ghstack.
 ## Required Permissions
 
 For this action to work properly, it needs the following repository permissions:
+
 - `contents: write` - To push changes when landing the PR
 - `pull-requests: write` - To update and merge pull requests
 
 ## Usage
 
 Simply comment on any pull request to trigger the action. The action will:
+
 1. Check if the PR is ready to be landed
 2. Use ghstack to land the changes if all checks pass
 
@@ -35,8 +37,8 @@ jobs:
     steps:
       - uses: shikanime/ghstack-actions@main
         with:
-            appId: ${{ secrets.APP_ID }}
-            privateKey: ${{ secrets.PRIVATE_KEY }}
+          appId: ${{ secrets.APP_ID }}
+          privateKey: ${{ secrets.PRIVATE_KEY }}
 ```
 
 This configuration will enable the ghstack action to run whenever a comment is
