@@ -9,5 +9,8 @@ jobs:
     steps:
       - uses: shikanime/ghstack-action@main
         with:
-          appId: ${{ vars.OPERATOR_APP_ID }}
-          privateKey: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          sign-commits: true
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
