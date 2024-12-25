@@ -1,4 +1,4 @@
-# ghstack GitHub Actions
+# ghstack GitHub Action
 
 This GitHub Action is a tool that enables you to land pull requests using
 ghstack directly from GitHub Pull Requests. It adds a command that can be used
