@@ -1,4 +1,4 @@
-name: Land
+name: ghstack
 author: Shikanime Deva
 branding:
   icon: globe
@@ -6,11 +6,20 @@ branding:
 description: Land a pull request
 inputs:
   appId:
-    description: 'The GitHub App ID'
+    description: The GitHub App ID
     required: true
   privateKey:
-    description: 'The GitHub App private key'
+    description: The GitHub App private key
     required: true
+  command:
+    description: The command to run
+    default: ".ghstack"
+  reaction:
+    description: The reaction to add
+    default: "rocket"
+  permissions:
+    description: The permissions to check
+    default: "write,maintain,admin"
 runs:
   using: composite
   steps:
@@ -22,10 +31,10 @@ runs:
     - uses: github/command@v1
       id: command
       with:
-        command: ".land"
-        reaction: rocket
+        command: ${{ inputs.command }}
+        reaction: ${{ inputs.reaction }}
         allowed_contexts: pull_request
-        permissions: maintain,admin
+        permissions: ${{ inputs.permissions }}
         github_token: ${{ steps.createGithubAppToken.outputs.token }}
     - uses: actions/checkout@v4
       with:
