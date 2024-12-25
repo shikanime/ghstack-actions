@@ -115,6 +115,7 @@ runs:
         allowed_contexts: pull_request
         permissions: ${{ inputs.permissions }}
         github_token: ${{ steps.createGithubAppToken.outputs.token }}
+        skip_ci: "true"
     - name: Land Pull Request
       shell: bash
       run: |
