@@ -13,10 +13,10 @@ inputs:
     required: true
   owner:
     description: The owner of the repository
-    default: ${{ github.repository_owner }}
+    default: ""
   repositories:
     description: The repositories to grant access to
-    default: ${{ github.repository }}
+    default: ""
   command:
     description: The command to run
     default: ".ghstack"
