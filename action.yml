@@ -68,20 +68,20 @@ runs:
           --local gpg.key "${{ steps.importGPG.outputs.keyid }}" \
           --local commit.gpgsign true
       if: ${{ inputs.sign-commits == 'true' }}
-    - uses: .github/actions/land.yaml
+    - uses: ./.github/actions/land.yaml
       with:
         command: .ghstack
         reaction: ${{ inputs.reaction }}
         permissions: ${{ inputs.permissions }}
         token: ${{ steps.createGithubAppToken.outputs.token }}
-    - uses: .github/actions/rebase.yaml
+    - uses: ./.github/actions/rebase.yaml
       with:
         base: ${{ inputs.base }}
         command: .rebase
         reaction: ${{ inputs.reaction }}
         permissions: ${{ inputs.permissions }}
         token: ${{ steps.createGithubAppToken.outputs.token }}
-    - uses: .github/actions/close.yaml
+    - uses: ./.github/actions/close.yaml
       with:
         command: .close
         reaction: ${{ inputs.reaction }}
