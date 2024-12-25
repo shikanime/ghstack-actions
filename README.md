@@ -1,9 +1,10 @@
 # ghstack GitHub Action
 
 This GitHub Action is a tool that enables you to land pull requests using
-ghstack directly from GitHub Pull Requests. It adds a command that can be used
-in pull request comments to check the status and automatically land the PR using
-ghstack.
+ghstack directly from GitHub Pull Requests web interface. It adds a command that
+can be used in pull request comments to check the status and automatically land
+the PR using ghstack.
+
 ## Required Permissions
 
 For this action to work properly, the GitHub App needs to be configured with the
@@ -14,14 +15,7 @@ following repository permissions:
 
 These permissions must be set in the GitHub App settings interface.
 
-## Usage
-
-Simply comment on any pull request to trigger the action. The action will:
-
-1. Check if the PR is ready to be landed
-2. Use ghstack to land the changes if all checks pass
-
-## Example Configuration
+## Workflow Configuration
 
 Add the following to your `.github/workflows/ghstack.yml`:
 
@@ -42,3 +36,85 @@ jobs:
 
 This configuration will enable the ghstack action to run whenever a comment is
 added to a pull request.
+
+## Repository Rules Configuration
+
+To ensure secure and efficient development workflow, we recommend configuring
+the following GitHub repository rules for branch protection and PR review
+requirements:
+
+### Main Branch Protection
+
+Configure these essential settings to protect your main branch:
+
+- Enable linear commit history to maintain a clean git history
+- Require signed commits for security verification
+- Apply rules specifically to refs/heads/main branch
+
+Example configuration:
+
+```terraform
+resource "github_repository_ruleset" "main" {
+  name        = "Main branch protections"
+  target      = "branch"
+  enforcement = "active"
+
+  conditions {
+    ref_name {
+      include = ["refs/heads/main"]
+    }
+  }
+
+  rules {
+    required_linear_history = true
+  }
+}
+```
+
+### Pull Request Requirements
+
+Configure these essential settings for pull request quality control:
+
+- Require resolution of all review threads before merging to ensure thorough
+  code review
+- Require all status checks to pass for comprehensive validation and quality
+  assurance
+
+This configuration enables the ghstack app to bypass restrictions for stack
+landing operations while maintaining standard PR merge capabilities for
+developers. It enforces a structured workflow where changes must be integrated
+into the main branch through pull requests.
+
+Example configuration:
+
+```terraform
+resource "github_repository_ruleset" "landing" {
+  name        = "Landing protections"
+  target      = "branch"
+  enforcement = "active"
+
+  conditions {
+    ref_name {
+      include = ["refs/heads/main"]
+    }
+  }
+
+  bypass_actors {
+    actor_id    = "<app-id>"
+    actor_type  = "Integration"
+    bypass_mode = "always"
+  }
+
+  rules {
+    pull_request {
+      required_review_thread_resolution = true
+    }
+    required_status_checks {
+      required_check {
+        context = "check"
+      }
+      strict_required_status_checks_policy = true
+    }
+  }
+}
+```
