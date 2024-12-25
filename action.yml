@@ -11,12 +11,12 @@ inputs:
   private-key:
     description: The GitHub App private key
     required: true
-  command:
-    description: The command to run
-    default: .ghstack
+  base:
+    description: The base branch to rebase onto
+    default: main
   reaction:
     description: The reaction to add
-    default: rocket
+    default: "rocket"
   permissions:
     description: The permissions to check
     default: write,maintain,admin
@@ -43,18 +43,10 @@ runs:
       with:
         app-id: ${{ inputs.app-id }}
         private-key: ${{ inputs.private-key }}
-    - uses: github/command@v1
-      id: command
-      with:
-        command: ${{ inputs.command }}
-        reaction: ${{ inputs.reaction }}
-        allowed_contexts: pull_request
-        permissions: ${{ inputs.permissions }}
-        github_token: ${{ steps.createGithubAppToken.outputs.token }}
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
-        token: ${{ steps.createGithubAppToken.outputs.token }}
+        token: ${{ inputs.token }}
     - uses: DeterminateSystems/nix-installer-action@v13
       if: ${{ steps.command.outputs.continue == 'true' }}
     - uses: DeterminateSystems/magic-nix-cache-action@v8
@@ -76,10 +68,16 @@ runs:
           --local gpg.key "${{ steps.importGPG.outputs.keyid }}" \
           --local commit.gpgsign true
       if: ${{ inputs.sign-commits == 'true' }}
-    - shell: bash
-      run: |
-        nix run nixpkgs#sapling -- ghstack land \
-          ${{ github.event.issue.pull_request.html_url }}
-      if: ${{ steps.command.outputs.continue == 'true' }}
-      env:
-        GH_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+    - uses: .github/actions/land.yaml
+      with:
+        command: .ghstack
+        reaction: ${{ inputs.reaction }}
+        permissions: ${{ inputs.permissions }}
+        token: ${{ steps.createGithubAppToken.outputs.token }}
+    - uses: .github/actions/rebase.yaml
+      with:
+        base: ${{ inputs.base }}
+        command: .rebase
+        reaction: ${{ inputs.reaction }}
+        permissions: ${{ inputs.permissions }}
+        token: ${{ steps.createGithubAppToken.outputs.token }}
