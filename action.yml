@@ -69,6 +69,7 @@ runs:
       with:
         gpg_private_key: ${{ inputs.gpg-private-key }}
         passphrase: ${{ inputs.gpg-passphrase }}
+      if: ${{ inputs.sign-commits == 'true' }}
     - shell: bash
       run: |
         nix run nixpkgs#sapling -- config \
