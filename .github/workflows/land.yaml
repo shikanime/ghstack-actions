@@ -1,0 +1,16 @@
+name: Land
+on:
+  issue_comment:
+    types:
+      - created
+permissions:
+  pull-requests: write
+  contents: write
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ..
+        with:
+          appId: ${{ vars.OPERATOR_APP_ID }}
+          privateKey: ${{ secrets.OPERATOR_PRIVATE_KEY }}
