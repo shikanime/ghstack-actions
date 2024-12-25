@@ -1,4 +1,4 @@
-name: land
+name: Land
 description: Land Pull Requests with ghstack
 inputs:
   command:
