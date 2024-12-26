@@ -1,0 +1,38 @@
+name: ghstack close
+author: Shikanime Deva
+branding:
+  icon: globe
+  color: gray-dark
+description: Close a pull request
+inputs:
+  command:
+    description: The command to run
+    default: .close
+  reaction:
+    description: The reaction to add
+    default: rocket
+  permissions:
+    description: The permissions to check
+    default: write,maintain,admin
+  token:
+    description: The GitHub token
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: github/command@v1
+      id: command
+      with:
+        command: ${{ inputs.command }}
+        reaction: ${{ inputs.reaction }}
+        allowed_contexts: pull_request
+        permissions: ${{ inputs.permissions }}
+        github_token: ${{ inputs.token }}
+    - shell: bash
+      run: |
+        sapling -- ghstack action \
+          --close \
+          ${{ github.event.issue.pull_request.html_url }}
+      if: ${{ steps.command.outputs.continue == 'true' }}
+      env:
+        GH_TOKEN: ${{ inputs.token }}

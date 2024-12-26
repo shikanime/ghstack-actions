@@ -1,0 +1,13 @@
+name: Setup Sapling
+author: Shikanime Deva
+branding:
+  icon: globe
+  color: gray-dark
+description: Install the Sapling tool
+runs:
+  using: composite
+  steps:
+    - uses: DeterminateSystems/nix-installer-action@v13
+    - uses: DeterminateSystems/magic-nix-cache-action@v8
+    - shell: bash
+      run: nix profile install nixpkgs#sapling
