@@ -1,0 +1,26 @@
+name: Import GPG
+author: Shikanime Deva
+branding:
+  icon: globe
+  color: gray-dark
+description: Import a GPG key
+inputs:
+  gpg-private-key:
+    description: The GPG private key
+    required: true
+  gpg-passphrase:
+    description: The GPG passphrase
+    required: true
+runs:
+  using: composite
+  steps:
+    - id: importGPG
+      uses: crazy-max/ghaction-import-gpg@v6
+      with:
+        gpg_private_key: ${{ inputs.gpg-private-key }}
+        passphrase: ${{ inputs.gpg-passphrase }}
+    - shell: bash
+      run: |
+        sapling -- config \
+          --local gpg.key "${{ steps.importGPG.outputs.keyid }}" \
+          --local commit.gpgsign true
