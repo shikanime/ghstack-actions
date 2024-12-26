@@ -48,6 +48,9 @@ runs:
         fetch-depth: 0
         token: ${{ steps.createGithubAppToken.outputs.token }}
     - uses: ./.github/actions/setup-sapling
+      with:
+        username: ${{ inputs.username }}
+        email: ${{ inputs.email }}
     - uses: ./.github/actions/import-gpg
       with:
         gpg-private-key: ${{ inputs.gpg-private-key }}

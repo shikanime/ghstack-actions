@@ -4,6 +4,13 @@ branding:
   icon: globe
   color: gray-dark
 description: Install the Sapling tool
+inputs:
+  username:
+    description: The username
+    required: true
+  email:
+    description: The email
+    required: true
 runs:
   using: composite
   steps:
@@ -11,3 +18,8 @@ runs:
     - uses: DeterminateSystems/magic-nix-cache-action@v8
     - shell: bash
       run: nix profile install nixpkgs#sapling
+    - shell: bash
+      run: |
+        sapling -- config \
+          --local ui.username "${{ inputs.username }}" \
+          --local ui.email "${{ inputs.email }}"
