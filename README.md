@@ -30,8 +30,8 @@ jobs:
     steps:
       - uses: shikanime/ghstack-actions@main
         with:
-          appId: ${{ secrets.APP_ID }}
-          privateKey: ${{ secrets.PRIVATE_KEY }}
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
 ```
 
 This configuration will enable the ghstack action to run whenever a comment is
